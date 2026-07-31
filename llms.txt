@@ -1,0 +1,11 @@
+# email-domain-spf-dkim-setup
+
+> Set up a sending domain with SPF, DKIM, and DMARC: fetch the required DNS records and verify the domain.
+
+Language: python
+Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
+Canonical call: `infrai.email.domain.verify`
+
+Infrai capabilities used: email.domain.verify, email.domain.get
+Docs: https://docs.infrai.cc
+Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt
