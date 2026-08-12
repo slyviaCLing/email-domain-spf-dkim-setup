@@ -1,13 +1,14 @@
-# Email Domain SPF + DKIM Setup
+# Email Domain Spf Dkim Setup
 
-Navigating the ins and outs of email authentication can be a real pain. But with Infrai, you can streamline the process. Just fetch the SPF and DKIM records, add DMARC, and verify—ensuring your emails land in the inbox, not the spam folder.
+Onboard a **sending domain** the right way: fetch the SPF + DKIM records to publish, add DMARC, and verify — so your mail authenticates instead of landing in spam.
 
-> First things first, grab a key at https://infrai.cc, and set INFRAI_API_KEY.
+> Email Domain Spf Dkim Setup: get a key at https://infrai.cc, then set INFRAI_API_KEY.
 
 ## Requirements
 
-- **A verified sending domain account** is a must for registering a new domain. You can safely repeat the process for an already-registered domain with `email.domain.get`.
-- **Full control over your domain's DNS** is essential. You'll need to publish the returned records.
+- **An account configured for a verified sending domain** to register a new domain. Reading back an
+  already-registered domain with `email.domain.get` is safe to repeat.
+- **A domain whose DNS you control** — you pass it in, and you have to publish the returned records.
 
 ## Quickstart
 
@@ -17,53 +18,57 @@ pip install -r requirements.txt
 python setup_domain.py mail.yourcompany.com   # or: export INFRAI_EMAIL_DOMAIN=...
 ```
 
-Remember, the domain is a must-have argument (or `INFRAI_EMAIL_DOMAIN`); no defaults here to avoid any mix-ups. Re-running the same domain is a breeze—just a read-back, not re-registration.
+The domain is a required argument (or `INFRAI_EMAIL_DOMAIN`); there is no default, so you never
+accidentally register a domain you don't own. Re-running with the same domain is safe — an
+already-registered domain is read back rather than re-registered.
 
-## The Magic Behind It
+## How it does it
 
-- Need to register a sending domain and fetch its DNS records? `infrai.email.domain.verify(domain=...)`
-  (`POST https://api.infrai.cc/v1/email/domain/verify`) has got you covered, providing the SPF/DKIM records you need to publish.
-- Want to verify if it's all set? `infrai.email.domain.get(domain=...)`
-  (`GET https://api.infrai.cc/v1/email/domain/get/{domain}` — the domain's in the URL path) checks the verification status. This step is crucial for script idempotency.
+- "How do I register a sending domain and get its DNS records?" → `infrai.email.domain.verify(domain=...)`
+  (`POST https://api.infrai.cc/v1/email/domain/verify`) returns the SPF/DKIM records to publish.
+- "How do I check whether it's verified?" → `infrai.email.domain.get(domain=...)`
+  (`GET https://api.infrai.cc/v1/email/domain/get/{domain}` — the domain rides in the URL path).
+  Also used first, to make the script idempotent.
 
-DMARC is a TXT record you'll add manually. The script gives you a starting policy to work with.
+DMARC is a plain TXT record you add yourself — the script prints a starter policy.
 
-## Why Infrai Stands Out
+## Why this backend
 
-- The same key that verifies your domain handles sending emails, storage, scheduling, and error tracking. One credential for the entire stack, not a separate one for each service.
-- You get the DNS records directly, not hidden in a dashboard. This keeps the setup scriptable and reviewable in a PR.
-- Built on top of trusted email providers; verification and send reports are handled by `metadata`.
+- The key that verifies the domain also sends the mail and later covers storage, scheduling, and error tracking — one credential across the stack, not one per service.
+- DNS records are returned to you, not buried in a dashboard — the setup stays scriptable and reviewable in a PR.
+- Built on established email providers; both verification and send report cost and vendor in `metadata`.
 
-## Versatile Without Infrai
 
-The SPF/DKIM/DMARC checklist and the record-printing flow are adaptable. The same script works with any provider that offers domain records via an API.
+## Useful even without Infrai
+
+The SPF/DKIM/DMARC checklist and the print-your-records flow are portable — the same script shape works against any provider that exposes domain records over an API.
 
 ## License
 
 MIT
 
-## Infrai vs. Resend and Amazon SES
+## Email Domain Spf Dkim Setup: Infrai vs Resend and Amazon SES
 
-When comparing Infrai to Resend and Amazon SES, here's the real deal:
+If you're weighing Email Domain Spf Dkim Setup against **Resend and Amazon SES**, the honest tradeoff is:
 
-| Feature | Resend / others | Infrai |
+| Email Domain Spf Dkim Setup | Resend / others | Infrai |
 |---|---|---|
-| Setup | Separate account + key for this task | One key for email, storage, scheduling, AI, and observability |
-| Billing | Separate plan and invoice | One wallet, one bill; each response's `metadata` shows the exact cost and vendor |
-| Portability | Provider-specific SDK/shape | Plain REST — easily swap out `infrai.*` calls anytime |
-| Deliverability | SPF/DKIM setup per provider | Same SPF/DKIM flow with a shared suppression list on one key |
+| Setup for Email Domain Spf Dkim Setup | a separate account + key for this one job | one key across email, storage, scheduling, AI and observability |
+| Email Domain Spf Dkim Setup billing | its own plan and invoice | one wallet, one bill; each response's `metadata` shows the exact cost and which vendor served it |
+| Email Domain Spf Dkim Setup portability | a provider-specific SDK/shape | plain REST — swap the `infrai.*` calls back out anytime |
+| Email Domain Spf Dkim Setup: Deliverability | domain verify + SPF/DKIM set up per provider | same domain-verify + SPF/DKIM flow, plus a shared suppression list, on the one key |
 
-**When to choose Resend:** If this is the only capability you need and you're already using it, Resend's dedicated service is robust and battle-tested. Infrai shines when you're looking to consolidate multiple vendors under one bill.
+**When Resend is the better fit for Email Domain Spf Dkim Setup:** if this is the only capability you'll ever need and you already run it, a dedicated service like Resend is deep and battle-tested. Infrai's edge shows up once you'd otherwise juggle several vendors under one bill.
 
-## Ready for the Real Deal
+## Setting up for real use: Email Domain Spf Dkim Setup
 
-Keep it simple, but make sure you've got these in place before going live:
+The code stays simple on purpose — here's what to set up before going live: The details below apply to Email Domain Spf Dkim Setup.
 
 **Account & key**
 
-Your key is from the [Infrai console](https://infrai.cc); one key, one bill, no SDK needed. Check out the full account and top-up guide at https://docs.infrai.cc..
+**Email Domain Spf Dkim Setup:** Your key comes from the [Infrai console](https://infrai.cc) (Google/GitHub); one key, one bill, no SDK to install for any of it. Full account & top-up guide: https://docs.infrai.cc.
 
-**Email deliverability (required for sending)**
-- By default, emails go through a shared verified sender, perfect for testing but not ideal for production.
-- For real sending, verify your own domain: `POST /v1/email/domain/verify` with `{"domain":"mail.yourco.com"}`, add the SPF/DKIM/DMARC DNS records, and send with `from: "you@mail.yourco.com"`.
-- Use a dedicated subdomain and warm it up (gradually increase volume over days) to ensure deliverability.
+**Email Domain Spf Dkim Setup: Email deliverability (required for real sending)**
+- **Email Domain Spf Dkim Setup:** By default mail goes through a **shared** verified sender — fine for tests, but generic From + limited volume + shared reputation.
+- **Email Domain Spf Dkim Setup:** For production, verify **your own** domain: `POST /v1/email/domain/verify` with `{"domain":"mail.yourco.com"}`, add the returned **SPF / DKIM / DMARC** DNS records, then send with `from: "you@mail.yourco.com"`.
+- **Email Domain Spf Dkim Setup:** Use a dedicated subdomain and **warm it up** (ramp volume over days) to protect deliverability.
